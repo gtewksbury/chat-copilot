@@ -6,32 +6,32 @@ jobs:
 
       # BUILD SOLUTION ARTIFACTS
 
-      - task: PowerShell@2
-        displayName: "Package web app"
-        inputs:
-          targetType: "filePath"
-          filePath: "$(Pipeline.Workspace)/s/scripts/deploy/package-webapi.ps1"
+      # - task: PowerShell@2
+      #   displayName: "Package web app"
+      #   inputs:
+      #     targetType: "filePath"
+      #     filePath: "$(Pipeline.Workspace)/s/scripts/deploy/package-webapi.ps1"
 
-      - task: PowerShell@2
-        displayName: "Package memory pipeline"
-        inputs:
-          targetType: "FilePath"
-          filePath: "$(Pipeline.Workspace)/s/scripts/deploy/package-memorypipeline.ps1"
+      # - task: PowerShell@2
+      #   displayName: "Package memory pipeline"
+      #   inputs:
+      #     targetType: "FilePath"
+      #     filePath: "$(Pipeline.Workspace)/s/scripts/deploy/package-memorypipeline.ps1"
 
-      - task: PowerShell@2
-        displayName: "Package plugins"
-        inputs:
-          targetType: "FilePath"
-          filePath: "$(Pipeline.Workspace)/s/scripts/deploy/package-plugins.ps1"
+      # - task: PowerShell@2
+      #   displayName: "Package plugins"
+      #   inputs:
+      #     targetType: "FilePath"
+      #     filePath: "$(Pipeline.Workspace)/s/scripts/deploy/package-plugins.ps1"
 
       # PUBLISH DEPLOYMENT ARTIFACTS
-      - publish: "$(Pipeline.Workspace)/s/scripts/deploy/out/webapi.zip"
-        displayName: publish webapi artifact
-        artifact: webapi
+      # - publish: "$(Pipeline.Workspace)/s/scripts/deploy/out/webapi.zip"
+      #   displayName: publish webapi artifact
+      #   artifact: webapi
 
-      - publish: "$(Pipeline.Workspace)/s/scripts/deploy/out/memorypipeline.zip"
-        displayName: publish memorypipeline artifact
-        artifact: memorypipeline
+      # - publish: "$(Pipeline.Workspace)/s/scripts/deploy/out/memorypipeline.zip"
+      #   displayName: publish memorypipeline artifact
+      #   artifact: memorypipeline
 
       - publish: "$(Pipeline.Workspace)/s/scripts/deploy"
         displayName: deploy

@@ -42,7 +42,7 @@ jobs:
                 azureSubscription: ${{ parameters.serviceConnectionName }}
                 ScriptType: "FilePath"
                 ScriptPath: "$(Pipeline.Workspace)/deploy/deploy-azure.ps1"
-                ScriptArguments: '-subscription "$(subscriptionId)" -resourceGroup "$(resourceGroup)" -deployment-name "$(deploymentName)" -ai-service "$(aiService)" -ai-service-key "$(aiServiceKey)" -ai-endpoint "$(aiServiceEndpoint)" -client-id "$(backEndApplicationId)" -frontend-client-id "$(frontEndApplicationId)" -tenant-id "$(tenantId)"'
+                ScriptArguments: '-subscription "$(subscriptionId)" -resourceGroup "$(resourceGroup)" -deployment-name "$(System.JobId).environment" -ai-service "$(aiService)" -ai-service-key "$(aiServiceKey)" -ai-endpoint "$(aiServiceEndpoint)" -client-id "$(backEndApplicationId)" -frontend-client-id "$(frontEndApplicationId)" -tenant-id "$(tenantId)"'
                 azurePowerShellVersion: LatestVersion
 
           # - task: AzureCLI@2
