@@ -48,11 +48,11 @@ param(
 
     [string]
     # Region to which to make the deployment
-    $Region = "southcentralus",
+    $Region = "eastus2",
 
     [string]
     # SKU for the Azure App Service plan
-    $WebAppServiceSku = "B1",
+    $WebAppServiceSku = "S1",
 
     [string]
     # Azure AD cloud instance for authenticating users
@@ -65,7 +65,7 @@ param(
 
     [switch]
     # Don't deploy Cosmos DB for chat storage - Use volatile memory instead
-    $NoCosmosDb,
+    $NoCosmosDb=$false,
 
     [switch]
     # Don't deploy Speech Services to enable speech as chat input
@@ -73,7 +73,7 @@ param(
 
     [switch]
     # Deploy the web searcher plugin
-    $DeployWebSearcherPlugin,
+    $DeployWebSearcherPlugin=$false,
 
     [switch]
     # Switches on verbose template deployment output

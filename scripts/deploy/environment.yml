@@ -1,53 +1,55 @@
 parameters:
-  environment: ''
-  subscriptionId: ''
-  location: 'East US 2'
-  serviceConnectionName: ''
-  resourceGroupName: ''
+  environment: ""
+  subscriptionId: ""
+  location: "East US 2"
+  serviceConnectionName: ""
+  resourceGroupName: ""
 
 jobs:
-- deployment: ${{ parameters.environment }}
-  displayName: deploy ${{ parameters.environment}}
-  environment: ${{ parameters.environment }}
-  strategy: 
-    runOnce:
-      deploy:
-        steps:
-         
-        # DOWNLOAD BUILD ARTIFACTS
-        - download: current
-          displayName: download source artifacts
-          artifact: source
+  - deployment: ${{ parameters.environment }}
+    displayName: deploy ${{ parameters.environment}}
+    environment: ${{ parameters.environment }}
+    variables:
+      - group: variables.${{ parameters.environment }} # grab variables from devops
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            # DOWNLOAD BUILD ARTIFACTS
+            - download: current
+              displayName: download source artifacts
+              artifact: source
 
-        # DEPLOY ENVIRONMENT
-        - task: AzureResourceManagerTemplateDeployment@3
-          displayName: deploy environment
-          inputs:
-            deploymentScope: 'Resource Group'
-            azureResourceManagerConnection: ${{ parameters.serviceConnectionName }}
-            subscriptionId: ${{ parameters.subscriptionId }}
-            action: 'Create Or Update Resource Group'
-            resourceGroupName: ${{ parameters.resourceGroupName }}
-            location: ${{ parameters.location }}
-            templateLocation: 'Linked artifact'
-            csmFile: '$(Pipeline.Workspace)/source/scripts/deploy/main.bicep'
-            csmParametersFile: '$(Pipeline.Workspace)/source/scripts/deploy/main.${{ parameters.environment }}.bicepparam'
-            deploymentMode: 'Incremental'
-            deploymentName: '$(System.JobId).environment'
+            # DEPLOY ENVIRONMENT
+            # - task: AzureResourceManagerTemplateDeployment@3
+            #   displayName: deploy environment
+            #   inputs:
+            #     deploymentScope: 'Resource Group'
+            #     azureResourceManagerConnection: ${{ parameters.serviceConnectionName }}
+            #     subscriptionId: ${{ parameters.subscriptionId }}
+            #     action: 'Create Or Update Resource Group'
+            #     resourceGroupName: ${{ parameters.resourceGroupName }}
+            #     location: ${{ parameters.location }}
+            #     templateLocation: 'Linked artifact'
+            #     csmFile: '$(Pipeline.Workspace)/source/scripts/deploy/main.bicep'
+            #     csmParametersFile: '$(Pipeline.Workspace)/source/scripts/deploy/main.${{ parameters.environment }}.bicepparam'
+            #     deploymentMode: 'Incremental'
+            #     deploymentName: '$(System.JobId).environment'
 
-        - task: AzurePowerShell@5
-          displayName: 'Package web app'
-          inputs:
-            azureSubscription: ${{ parameters.serviceConnectionName }}
-            ScriptType: 'FilePath'
-            ScriptPath: '$(Pipeline.Workspace)/source/scripts/deploy/package-webapi.ps1'
-            azurePowerShellVersion: LatestVersion
+            - task: AzurePowerShell@5
+              displayName: "Deploy azure environment"
+              inputs:
+                azureSubscription: ${{ parameters.serviceConnectionName }}
+                ScriptType: "FilePath"
+                ScriptPath: "$(Pipeline.Workspace)/deploy/deploy-azure.ps1"
+                ScriptArguments: '-subscription "$(subscriptionId)" -resourceGroup "$(resourceGroup)" -deployment-name "$(deploymentName)" -ai-service "$(aiService)" -ai-service-key "$(aiServiceKey)" -ai-endpoint "$(aiServiceEndpoint)" -client-id "$(backEndApplicationId)" -frontend-client-id "$(frontEndApplicationId)" -tenant-id "$(tenantId)"'
+                azurePowerShellVersion: LatestVersion
 
-        - task: AzureCLI@2
-          inputs:
-            azureSubscription: ${{ parameters.serviceConnectionName }}
-            scriptType: 'pscore'
-            scriptLocation: 'scriptPath'
-            scriptPath: '$(Pipeline.Workspace)/source/scripts/deploy/deploy-webapi.ps1'
-            arguments: '-Subscription "$(Subscription)" -ResourceGroupName "$(ResourceGroupName)" -DeploymentName "$(System.JobId).environment"'
-            addSpnToEnvironment: true
+          # - task: AzureCLI@2
+          #   inputs:
+          #     azureSubscription: ${{ parameters.serviceConnectionName }}
+          #     scriptType: 'pscore'
+          #     scriptLocation: 'scriptPath'
+          #     scriptPath: '$(Pipeline.Workspace)/source/scripts/deploy/deploy-webapi.ps1'
+          #     arguments: '-Subscription "$(Subscription)" -ResourceGroupName "$(ResourceGroupName)" -DeploymentName "$(System.JobId).environment"'
+          #     addSpnToEnvironment: true
