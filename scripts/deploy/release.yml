@@ -1,0 +1,27 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    include:
+    - master
+      
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: build
+  jobs:
+  - template: build.yml
+
+
+- stage: dev
+  jobs:
+  - template: environment.yml
+    parameters:
+      environment: dev
+      subscriptionId: a81c04f0-bf2e-485c-9725-994644ad6dab
+      serviceConnectionName: Aurora-AI
+      resourceGroupName: auroraai-alpha-dev

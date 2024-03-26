@@ -1,0 +1,40 @@
+jobs:
+  - job: build
+    steps:
+      - checkout: self
+        clean: true
+
+      # BUILD SOLUTION ARTIFACTS
+
+      - task: AzurePowerShell@5
+        displayName: "Package web app"
+        inputs:
+          azureSubscription: ${{ parameters.serviceConnectionName }}
+          ScriptType: "FilePath"
+          ScriptPath: "$(Pipeline.Workspace)/s/scripts/deploy/package-webapi.ps1"
+          azurePowerShellVersion: LatestVersion
+
+      - task: AzurePowerShell@5
+        displayName: "Package memory pipeline"
+        inputs:
+          azureSubscription: ${{ parameters.serviceConnectionName }}
+          ScriptType: "FilePath"
+          ScriptPath: "$(Pipeline.Workspace)/s/scripts/deploy/package-memorypipeline.ps1"
+          azurePowerShellVersion: LatestVersion
+
+      - task: AzurePowerShell@5
+        displayName: "Package plugins"
+        inputs:
+          azureSubscription: ${{ parameters.serviceConnectionName }}
+          ScriptType: "FilePath"
+          ScriptPath: "$(Pipeline.Workspace)/s/scripts/deploy/package-plugins.ps1"
+          azurePowerShellVersion: LatestVersion
+
+      # PUBLISH DEPLOYMENT ARTIFACTS
+      - publish: "$(Pipeline.Workspace)/s/scripts/deploy/out/webapi.zip"
+        displayName: publish webapi artifact
+        artifact: webapi
+
+      - publish: "$(Pipeline.Workspace)/s/scripts/deploy/out/memorypipeline.zip"
+        displayName: publish memorypipeline artifact
+        artifact: memorypipeline
